@@ -5,11 +5,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../roles/role.entity';
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn({ name: 'user_id' })
+  @PrimaryGeneratedColumn({ name: 'user_id', type: 'int' })
   userId: number;
 
   @Column({ name: 'first_name' })
@@ -23,6 +23,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ name: 'password_needs_reset', default: false })
+  passwordNeedsReset: boolean;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   @JoinTable()
