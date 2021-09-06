@@ -10,7 +10,7 @@ import { Role } from '../roles/role.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn({ name: 'user_id', type: 'int' })
-  userId: number;
+  id: number;
 
   @Column({ name: 'first_name' })
   firstName: string;
@@ -24,7 +24,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ name: 'password_needs_reset', default: false })
+  @Column({ name: 'password_needs_reset', default: true })
   passwordNeedsReset: boolean;
 
   @ManyToOne(() => Role, (role) => role.users, { eager: true })

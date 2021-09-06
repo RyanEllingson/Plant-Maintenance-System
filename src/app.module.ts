@@ -5,10 +5,12 @@ import { AppService } from './app.service';
 import { Role } from './roles/role.entity';
 import { User } from './users/user.entity';
 import { RoleModule } from './roles/role.module';
+import { UserModule } from './users/user.module';
 
 @Module({
   imports: [
     RoleModule,
+    UserModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

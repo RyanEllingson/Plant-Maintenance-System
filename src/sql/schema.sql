@@ -1,6 +1,6 @@
-drop database if exists maintenance_test;
-create database maintenance_test;
-use maintenance_test;
+drop database if exists maintenance;
+create database maintenance;
+use maintenance;
 
 create table roles (
     role_id int primary key auto_increment,
@@ -12,10 +12,11 @@ create table users (
     first_name varchar(30) not null,
     last_name varchar(50) not null,
     email varchar(50) unique not null,
-    password_needs_reset boolean default false,
-    role_id int not null,
-    constraint fk_user_role_id
-        foreign key (role_id)
+    password varchar(50) not null,
+    password_needs_reset boolean default true,
+    roleId int not null,
+    constraint fk_user_roleId
+        foreign key (roleId)
         references roles(role_id)
 );
 

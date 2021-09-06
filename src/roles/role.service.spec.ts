@@ -27,7 +27,7 @@ describe('RoleService', () => {
   it('should find 5 roles', async () => {
     const roles = await service.getAllRoles();
     expect(roles.length).toBe(5);
-    expect(roles[0].roleId).toBe(1);
+    expect(roles[0].id).toBe(1);
     expect(roles[0].roleName).toBe('admin');
   });
 });
