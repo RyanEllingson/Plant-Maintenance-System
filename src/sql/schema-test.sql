@@ -20,7 +20,7 @@ create table users (
         references roles(role_id)
 );
 
-insert into roles (role_name) values ("admin"), ("planner"), ("mainenance"), ("operations"), ("engineering");
+insert into roles (role_name) values ("admin"), ("planner"), ("maintenance"), ("operations"), ("engineering");
 
 delimiter //
 create procedure set_known_good_state()
@@ -31,7 +31,6 @@ begin
 
     insert into users(first_name, last_name, email, password, roleId) values ("testy", "testerson", "test1@test.com", "password", 1);
     insert into users(first_name, last_name, email, password, roleId) values ("testus", "testerino", "test2@test.com", "password", 2);
-    insert into users(first_name, last_name, email, password, roleId) values ("test", "testenson", "test3@test.com", "password", 3);
 
 end //
 delimiter ;

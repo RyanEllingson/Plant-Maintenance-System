@@ -20,4 +20,4 @@ create table users (
         references roles(role_id)
 );
 
-insert into roles (role_name) values ("admin"), ("planner"), ("mainenance"), ("operations"), ("engineering");
+insert into roles (role_name) values ("admin"), ("planner"), ("maintenance"), ("operations"), ("engineering");
