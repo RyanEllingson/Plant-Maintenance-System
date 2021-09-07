@@ -42,7 +42,7 @@ describe('UserService', () => {
     expect(user.role.roleName).toBe('admin');
   });
 
-  it('should not find non existing ID', async () => {
+  it('should not find non-existing ID', async () => {
     const user = await service.getUserById(0);
     expect(user).toBeUndefined();
   });
@@ -59,7 +59,7 @@ describe('UserService', () => {
     expect(users[0].role.roleName).toBe('admin');
   });
 
-  it('should not find non existing email', async () => {
+  it('should not find non-existing email', async () => {
     const users = await service.getUsersByEmail('bla@bla.com');
     expect(users.length).toBe(0);
   });
@@ -102,5 +102,30 @@ describe('UserService', () => {
     expect(updatedUser.passwordNeedsReset).toBe(false);
     expect(updatedUser.role.id).toBe(5);
     expect(updatedUser.role.roleName).toBe('engineering');
+  });
+
+  it('should not update non-existing user', async () => {
+    try {
+      await service.updateUser({
+        id: 7,
+        passwordNeedsReset: false,
+      });
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(error.status).toBe(404);
+      expect(error.message).toBe('User ID 7 not found');
+      expect(error.name).toBe('NotFoundException');
+    }
+  });
+
+  it('should not update user with no ID', async () => {
+    try {
+      await service.updateUser({ email: 'test8@test.com' });
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(error.status).toBe(400);
+      expect(error.message).toBe('User ID is required');
+      expect(error.name).toBe('BadRequestException');
+    }
   });
 });
