@@ -10,4 +10,8 @@ export class RoleService {
   public getAllRoles(): Promise<Role[]> {
     return this.repo.find();
   }
+
+  public getRoleById(roleId: number): Promise<Role> {
+    return this.repo.findOne(roleId);
+  }
 }
