@@ -21,12 +21,6 @@ import { UserModule } from './users/user.module';
       entities: [Role, User],
       synchronize: false,
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'sqlite',
-    //   database: 'db.sqlite',
-    //   entities: [Role, User],
-    //   synchronize: true,
-    // }),
   ],
   controllers: [AppController],
   providers: [AppService],
