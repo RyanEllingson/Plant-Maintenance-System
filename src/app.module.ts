@@ -6,11 +6,13 @@ import { Role } from './roles/role.entity';
 import { User } from './users/user.entity';
 import { RoleModule } from './roles/role.module';
 import { UserModule } from './users/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     RoleModule,
     UserModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

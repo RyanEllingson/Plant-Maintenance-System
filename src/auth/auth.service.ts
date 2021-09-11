@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from '../users/user.service';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
-import { User } from './user.entity';
+import { User } from '../users/user.entity';
 import { RoleService } from '../roles/role.service';
 
 const scrypt = promisify(_scrypt);

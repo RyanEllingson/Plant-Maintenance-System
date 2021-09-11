@@ -4,8 +4,8 @@ import { Role } from '../roles/role.entity';
 import { RoleService } from '../roles/role.service';
 import { promisify } from 'util';
 import { AuthService } from './auth.service';
-import { User } from './user.entity';
-import { UserService } from './user.service';
+import { User } from '../users/user.entity';
+import { UserService } from '../users/user.service';
 
 const scrypt = promisify(_scrypt);
 
