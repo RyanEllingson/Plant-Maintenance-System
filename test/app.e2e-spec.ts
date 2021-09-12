@@ -2,23 +2,99 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { getConnection } from 'typeorm';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    await getConnection().query('call set_known_good_state()');
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  let token = '';
+
+  it('should successfully register', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/register')
+      .send({
+        firstName: 'testina',
+        lastName: 'testerella',
+        email: 'test3@test.com',
+        password: 'password',
+        roleId: 5,
+      })
+      .expect(201);
+    const { access_token } = res.body;
+    expect(typeof access_token).toBe('string');
+    expect(access_token.split('.').length).toBe(3);
+  });
+
+  it('should not register with invalid data', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/register')
+      .send({
+        firstName: 'testina',
+        lastName: 'testerella',
+        email: 'bogusemail',
+        password: 'password',
+        roleId: 'hahaha',
+      })
+      .expect(400);
+    const { message } = res.body;
+    expect(message.length).toBe(3);
+    expect(message).toContain('email must be an email');
+    expect(message).toContain('roleId must be an integer number');
+    expect(message).toContain('roleId must not be less than 0');
+  });
+
+  it('should not register with missing data', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/register')
+      .send({})
+      .expect(400);
+    const { message } = res.body;
+    expect(message.length).toBe(6);
+    expect(message).toContain('firstName must be a string');
+    expect(message).toContain('lastName must be a string');
+    expect(message).toContain('email must be an email');
+    expect(message).toContain('password must be a string');
+    expect(message).toContain('roleId must be an integer number');
+    expect(message).toContain('roleId must not be less than 0');
+  });
+
+  it('should successfully login', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'test3@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+    token = access_token;
+    expect(typeof access_token).toBe('string');
+    expect(access_token.split('.').length).toBe(3);
+  });
+
+  it('should return roles when logged in', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/roles')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+    const { body } = res;
+    expect(body.length).toBe(5);
+    expect(body[0].id).toBe(1);
+    expect(body[0].roleName).toBe('admin');
+  });
+
+  it('should not return roles when not logged in', async () => {
+    await request(app.getHttpServer()).get('/api/roles').expect(401);
   });
 });
