@@ -6,6 +6,9 @@ import { promisify } from 'util';
 import { AuthService } from './auth.service';
 import { User } from '../users/user.entity';
 import { UserService } from '../users/user.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { AppModule } from '../app.module';
+import { AuthModule } from './auth.module';
 
 const scrypt = promisify(_scrypt);
 
@@ -23,11 +26,12 @@ describe('AuthService', () => {
             email,
             password:
               'ef29aaed6b959cb5.aedc7d941163911fc8452dd454f15e2418c0ae3790a88334b113c33c441e6335',
+            passwordNeedsReset: false,
             role: {
               id: 1,
               roleName: 'admin',
             } as Role,
-          } as User);
+          });
         }
         return Promise.resolve(result);
       },
@@ -61,6 +65,12 @@ describe('AuthService', () => {
       },
     };
     const module = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: 'secret',
+          signOptions: { expiresIn: '60s' },
+        }),
+      ],
       providers: [
         AuthService,
         { provide: UserService, useValue: userService },
@@ -111,8 +121,8 @@ describe('AuthService', () => {
     }
   });
 
-  it('should successfully login with correct email and password', async () => {
-    const user = await service.login('bla@bla.com', 'password');
+  it('should successfully authenticate with correct email and password', async () => {
+    const user = await service.authenticate('bla@bla.com', 'password');
     expect(user.id).toBe(1);
     expect(user.firstName).toBe('TestFirstName');
     expect(user.lastName).toBe('TestLastName');
@@ -121,9 +131,9 @@ describe('AuthService', () => {
     expect(user.role.roleName).toBe('admin');
   });
 
-  it('should not login with non-existing email', async () => {
+  it('should not authenticate with non-existing email', async () => {
     try {
-      await service.login('bogus@email.com', 'password');
+      await service.authenticate('bogus@email.com', 'password');
       expect(false).toBe(true);
     } catch (error) {
       expect(error.status).toBe(404);
@@ -132,14 +142,32 @@ describe('AuthService', () => {
     }
   });
 
-  it('should not login with incorrect password', async () => {
+  it('should not authenticate with incorrect password', async () => {
     try {
-      await service.login('bla@bla.com', 'wrongpassword');
+      await service.authenticate('bla@bla.com', 'wrongpassword');
       expect(false).toBe(true);
     } catch (error) {
       expect(error.status).toBe(400);
       expect(error.message).toBe('Invalid password');
       expect(error.name).toBe('BadRequestException');
     }
+  });
+
+  it('should return a signed JWT', async () => {
+    const result = await service.login({
+      id: 1,
+      firstName: 'TestFirstName',
+      lastName: 'TestLastName',
+      email: 'test@test.com',
+      password:
+        'ef29aaed6b959cb5.aedc7d941163911fc8452dd454f15e2418c0ae3790a88334b113c33c441e6335',
+      passwordNeedsReset: false,
+      role: {
+        id: 1,
+        roleName: 'admin',
+      } as Role,
+    });
+    expect(typeof result.access_token).toBe('string');
+    expect(result.access_token.split('.').length).toBe(3);
   });
 });

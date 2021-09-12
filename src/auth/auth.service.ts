@@ -8,6 +8,7 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { User } from '../users/user.entity';
 import { RoleService } from '../roles/role.service';
+import { JwtService } from '@nestjs/jwt';
 
 const scrypt = promisify(_scrypt);
 
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private roleService: RoleService,
+    private jwtService: JwtService,
   ) {}
 
   async register(
@@ -48,7 +50,7 @@ export class AuthService {
     );
   }
 
-  async login(email: string, password: string): Promise<User> {
+  async authenticate(email: string, password: string): Promise<User> {
     const [user] = await this.userService.getUsersByEmail(email);
     if (!user) {
       throw new NotFoundException(`Email ${email} not found`);
@@ -59,5 +61,19 @@ export class AuthService {
       throw new BadRequestException('Invalid password');
     }
     return user;
+  }
+
+  async login(user: User) {
+    const payload = {
+      sub: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      roleId: user.role.id,
+      role: user.role.roleName,
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }

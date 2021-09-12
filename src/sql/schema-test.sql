@@ -12,7 +12,7 @@ create table users (
     first_name varchar(30) not null,
     last_name varchar(50) not null,
     email varchar(50) unique not null,
-    password varchar(50) not null,
+    password varchar(100) not null,
     password_needs_reset boolean default true,
     roleId int not null,
     constraint fk_user_roleId
