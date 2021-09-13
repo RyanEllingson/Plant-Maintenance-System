@@ -7,7 +7,8 @@ import { User } from './users/user.entity';
 import { RoleModule } from './roles/role.module';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { RolesGuard } from './roles/roles.guard';
 
 @Module({
   imports: [

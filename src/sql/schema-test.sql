@@ -31,6 +31,8 @@ begin
 
     insert into users(first_name, last_name, email, password, roleId) values ("testy", "testerson", "test1@test.com", "password", 1);
     insert into users(first_name, last_name, email, password, roleId) values ("testus", "testerino", "test2@test.com", "password", 2);
+    insert into users(first_name, last_name, email, password, roleId) values ("testy", "testerson", "admin@test.com", "ef29aaed6b959cb5.aedc7d941163911fc8452dd454f15e2418c0ae3790a88334b113c33c441e6335", 1);
+	insert into users(first_name, last_name, email, password, roleId) values ("testy", "testerson", "planner@test.com", "ef29aaed6b959cb5.aedc7d941163911fc8452dd454f15e2418c0ae3790a88334b113c33c441e6335", 2);
 
 end //
 delimiter ;
