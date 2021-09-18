@@ -7,8 +7,9 @@ import { User } from './users/user.entity';
 import { RoleModule } from './roles/role.module';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { RolesGuard } from './roles/roles.guard';
+import { APP_PIPE } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { RolesGuard } from './roles/roles.guard';
       database: 'maintenance_test',
       entities: [Role, User],
       synchronize: false,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'client', 'dist', 'client'),
+      exclude: ['/api*'],
     }),
   ],
   controllers: [AppController],
