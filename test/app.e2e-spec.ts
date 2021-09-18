@@ -14,6 +14,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
     await app.init();
 
     await getConnection().query('call set_known_good_state()');
@@ -29,6 +30,7 @@ describe('AppController (e2e)', () => {
       .expect(200);
     const { access_token } = res.body;
     token = access_token;
+    console.log(access_token);
     expect(typeof access_token).toBe('string');
     expect(access_token.split('.').length).toBe(3);
   });

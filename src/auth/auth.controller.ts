@@ -13,7 +13,7 @@ import { Roles } from '../roles/roles.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 
-@Controller('api')
+@Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -25,8 +25,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('register')
   @Roles(1)
+  @Post('register')
   async register(@Body() body: RegisterDto) {
     const { firstName, lastName, email, password, roleId } = body;
     const user = await this.authService.register(

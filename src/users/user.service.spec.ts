@@ -73,9 +73,9 @@ describe('UserService', () => {
       'password',
       roles[2],
     );
-    expect(user.id).toBe(3);
+    expect(user.id).toBe(5);
 
-    const addedUser = await service.getUserById(3);
+    const addedUser = await service.getUserById(5);
     expect(addedUser.firstName).toBe('testy');
     expect(addedUser.lastName).toBe('tester');
     expect(addedUser.email).toBe('test3@test.com');

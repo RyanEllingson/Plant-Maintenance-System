@@ -3,7 +3,7 @@ import { RoleService } from './role.service';
 import { Role } from './role.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('api/roles')
+@Controller('roles')
 export class RoleController {
   constructor(private service: RoleService) {}
 
