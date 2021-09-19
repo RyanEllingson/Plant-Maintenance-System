@@ -3,19 +3,46 @@
     <div class="col-8">
       <div class="card rounded-0 shadow-lg">
         <div class="card-body">
-          <h5 class="card-title text-center">Login to your account</h5>
+          <h5 class="card-title text-center mb-3">Login to your account</h5>
+          <div *ngIf="submissionError" class="alert alert-danger" role="alert">
+            {{ submissionError }}
+          </div>
           <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input class="form-control" type="text" formControlName="email" />
+            <div class="form-floating mb-3">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="email"
+                placeholder="name@example.com"
+                [ngClass]="{ 'is-invalid': hasError('email') }"
+              />
+              <label>Email</label>
+              <ng-container *ngIf="hasError('email')">
+                <div
+                  *ngFor="let error of getErrors('email')"
+                  class="invalid-feedback"
+                >
+                  {{ error }}
+                </div>
+              </ng-container>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Password</label>
+            <div class="form-floating mb-3">
               <input
                 class="form-control"
                 type="password"
                 formControlName="password"
+                placeholder="password"
+                [ngClass]="{ 'is-invalid': hasError('password') }"
               />
+              <label>Password</label>
+              <ng-container *ngIf="hasError('password')">
+                <div
+                  *ngFor="let error of getErrors('password')"
+                  class="invalid-feedback"
+                >
+                  {{ error }}
+                </div>
+              </ng-container>
             </div>
             <button class="btn btn-primary" type="submit">Submit</button>
           </form>
