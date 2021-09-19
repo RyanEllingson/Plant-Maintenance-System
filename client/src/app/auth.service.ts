@@ -36,4 +36,9 @@ export class AuthService {
       });
     });
   }
+
+  public logout(): void {
+    this.token = null;
+    this.user = null;
+  }
 }
