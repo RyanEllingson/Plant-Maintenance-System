@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
   });
   public submissionError = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   public hasError(field: string) {
     const control = this.loginForm.get(field);
@@ -39,8 +40,8 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAsUntouched();
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
-        next: (value) => {
-          this.submissionError = value;
+        next: () => {
+          this.router.navigateByUrl('');
         },
         error: (err) => {
           this.submissionError = err;
