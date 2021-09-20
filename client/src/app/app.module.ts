@@ -6,15 +6,20 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginModule } from './login/login.module';
 import { HomeModule } from './home/home.module';
+import { RegisterModule } from './register/register.module';
+import { SharedModule } from './shared/shared.module';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, NavbarComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    HomeModule,
+    SharedModule,
     LoginModule,
+    RegisterModule,
+    HomeModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
