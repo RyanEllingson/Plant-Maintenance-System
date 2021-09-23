@@ -4,8 +4,8 @@
       <div class="card rounded-0 shadow-lg">
         <div class="card-body">
           <h5 class="card-title text-center mb-3">Login to your account</h5>
-          <div *ngIf="submissionError" class="alert alert-danger" role="alert">
-            {{ submissionError }}
+          <div *ngIf="loginForm.errors" class="alert alert-danger" role="alert">
+            {{ loginForm.errors.errorResponse }}
           </div>
           <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
             <div class="form-floating mb-3">

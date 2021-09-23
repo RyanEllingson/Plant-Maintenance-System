@@ -13,7 +13,6 @@ export class LoginComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
-  public submissionError = '';
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -44,7 +43,7 @@ export class LoginComponent implements OnInit {
           this.router.navigateByUrl('');
         },
         error: (err) => {
-          this.submissionError = err.error.message;
+          this.loginForm.setErrors({ errorResponse: err.error.message });
         },
       });
     }
