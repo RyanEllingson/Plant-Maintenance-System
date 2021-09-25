@@ -16,23 +16,6 @@ export class LoginComponent implements OnInit {
 
   constructor(private router: Router, private authService: AuthService) {}
 
-  public hasError(field: string) {
-    const control = this.loginForm.get(field);
-    return control.errors && control.touched;
-  }
-
-  public getErrors(field: string) {
-    const errors = [];
-    const control = this.loginForm.get(field);
-    if (control.errors.required) {
-      errors.push('Entry is required');
-    }
-    if (control.errors.email) {
-      errors.push('Entry must be a valid email');
-    }
-    return errors;
-  }
-
   public handleSubmit(): void {
     this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
@@ -43,7 +26,15 @@ export class LoginComponent implements OnInit {
           this.router.navigateByUrl('');
         },
         error: (err) => {
-          this.loginForm.setErrors({ errorResponse: err.error.message });
+          if (err.status === 0) {
+            this.loginForm.setErrors({
+              errorMessage: 'No internet connection',
+            });
+          } else {
+            this.loginForm.setErrors({
+              errorResponse: err.error.message,
+            });
+          }
         },
       });
     }

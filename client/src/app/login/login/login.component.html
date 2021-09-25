@@ -1,49 +1,23 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-8">
-      <div class="card rounded-0 shadow-lg">
+      <div class="card rounded-0 shadow-lg px-3">
         <div class="card-body">
           <h5 class="card-title text-center mb-3">Login to your account</h5>
           <div *ngIf="loginForm.errors" class="alert alert-danger" role="alert">
             {{ loginForm.errors.errorResponse }}
           </div>
           <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()">
-            <div class="form-floating mb-3">
-              <input
-                class="form-control"
-                type="text"
-                formControlName="email"
-                placeholder="name@example.com"
-                [ngClass]="{ 'is-invalid': hasError('email') }"
-              />
-              <label>Email</label>
-              <ng-container *ngIf="hasError('email')">
-                <div
-                  *ngFor="let error of getErrors('email')"
-                  class="invalid-feedback"
-                >
-                  {{ error }}
-                </div>
-              </ng-container>
-            </div>
-            <div class="form-floating mb-3">
-              <input
-                class="form-control"
-                type="password"
-                formControlName="password"
-                placeholder="password"
-                [ngClass]="{ 'is-invalid': hasError('password') }"
-              />
-              <label>Password</label>
-              <ng-container *ngIf="hasError('password')">
-                <div
-                  *ngFor="let error of getErrors('password')"
-                  class="invalid-feedback"
-                >
-                  {{ error }}
-                </div>
-              </ng-container>
-            </div>
+            <app-input
+              inputType="text"
+              label="email"
+              [control]="loginForm.get('email')"
+            ></app-input>
+            <app-input
+              inputType="password"
+              label="password"
+              [control]="loginForm.get('password')"
+            ></app-input>
             <button class="btn btn-primary" type="submit">Submit</button>
           </form>
         </div>

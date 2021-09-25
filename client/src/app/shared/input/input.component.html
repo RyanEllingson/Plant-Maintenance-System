@@ -1,0 +1,15 @@
+<div class="form-floating mb-3">
+  <input
+    class="form-control"
+    [type]="inputType"
+    [formControl]="control"
+    [placeholder]="label"
+    [ngClass]="{ 'is-invalid': hasError() }"
+  />
+  <label>{{ label | titlecase }}</label>
+  <ng-container *ngIf="hasError()">
+    <div *ngFor="let error of getErrors()" class="invalid-feedback">
+      {{ error }}
+    </div>
+  </ng-container>
+</div>
