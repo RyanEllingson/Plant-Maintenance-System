@@ -23,12 +23,17 @@ export class LoginComponent implements OnInit {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
         next: () => {
-          this.router.navigateByUrl('');
+          this.router.navigateByUrl('home');
         },
         error: (err) => {
           if (err.status === 0) {
             this.loginForm.setErrors({
               errorResponse: 'No internet connection',
+            });
+          } else if (err.status === 504) {
+            this.loginForm.setErrors({
+              errorResponse:
+                'Unable to connect to the server - please try again later',
             });
           } else {
             this.loginForm.setErrors({
