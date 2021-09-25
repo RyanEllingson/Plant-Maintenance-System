@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
         error: (err) => {
           if (err.status === 0) {
             this.loginForm.setErrors({
-              errorMessage: 'No internet connection',
+              errorResponse: 'No internet connection',
             });
           } else {
             this.loginForm.setErrors({

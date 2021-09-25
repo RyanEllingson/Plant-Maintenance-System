@@ -8,9 +8,10 @@ import { LoginModule } from './login/login.module';
 import { HomeModule } from './home/home.module';
 import { RegisterModule } from './register/register.module';
 import { SharedModule } from './shared/shared.module';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, LogoutComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
