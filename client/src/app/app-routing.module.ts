@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { LogoutComponent } from './logout/logout.component';
 
@@ -15,7 +16,7 @@ const routes: Routes = [
     path: 'register',
     loadChildren: () =>
       import('./register/register.module').then((mod) => mod.RegisterModule),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, AdminGuard],
   },
 ];
 
