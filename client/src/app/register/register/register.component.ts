@@ -22,8 +22,11 @@ export class RegisterComponent implements OnInit {
   constructor(private roleService: RoleService) {}
 
   ngOnInit(): void {
-    this.roleService.getAllRoles().subscribe((allRoles) => {
-      this.allRoles = allRoles;
+    this.roleService.getAllRoles().subscribe({
+      next: (allRoles) => {
+        this.allRoles = allRoles;
+      },
+      error: (err) => {},
     });
   }
 }
