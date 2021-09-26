@@ -47,9 +47,6 @@ describe('AppController (e2e)', () => {
       })
       .set('Authorization', `Bearer ${token}`)
       .expect(201);
-    const { access_token } = res.body;
-    expect(typeof access_token).toBe('string');
-    expect(access_token.split('.').length).toBe(3);
   });
 
   it('should not register if not logged in', async () => {
