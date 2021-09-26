@@ -1,1 +1,45 @@
-<p>register works!</p>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div class="card rounded-0 shadow-lg px-3">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-3">Register a new user</h5>
+          <form [formGroup]="registerForm">
+            <app-input
+              inputType="text"
+              label="first name"
+              [control]="registerForm.get('firstName')"
+            ></app-input>
+            <app-input
+              inputType="text"
+              label="last name"
+              [control]="registerForm.get('lastName')"
+            ></app-input>
+            <app-input
+              inputType="password"
+              label="password"
+              [control]="registerForm.get('password')"
+            ></app-input>
+            <app-input
+              inputType="password"
+              label="confirm password"
+              [control]="registerForm.get('confirmPassword')"
+            ></app-input>
+            <app-input
+              inputType="text"
+              label="email"
+              [control]="registerForm.get('email')"
+            ></app-input>
+            <select class="form-select" formControlName="role">
+              <option [ngValue]="null" disabled>Choose role</option>
+              <option *ngFor="let role of allRoles" [ngValue]="role">
+                {{ role.roleName | titlecase }}
+              </option>
+            </select>
+          </form>
+          {{ registerForm.value | json }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
