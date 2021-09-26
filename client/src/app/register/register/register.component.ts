@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { RegisterService } from 'src/app/services/register.service';
 import { Role, RoleService } from '../../services/role.service';
 
 @Component({
@@ -19,7 +20,12 @@ export class RegisterComponent implements OnInit {
 
   public allRoles: Role[] = [];
 
-  constructor(private roleService: RoleService) {}
+  constructor(
+    private roleService: RoleService,
+    private registerService: RegisterService,
+  ) {}
+
+  public handleSubmit() {}
 
   ngOnInit(): void {
     this.roleService.getAllRoles().subscribe({
