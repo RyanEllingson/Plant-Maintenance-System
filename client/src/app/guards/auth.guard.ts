@@ -6,7 +6,7 @@ import {
   UrlTree,
   Router,
 } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot,
   ): boolean | UrlTree {
     if (this.token === null) {
-      return this.router.parseUrl('/login');
+      return this.router.parseUrl('');
     }
     return true;
   }
