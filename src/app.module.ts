@@ -1,7 +1,5 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { Role } from './roles/role.entity';
 import { User } from './users/user.entity';
 import { RoleModule } from './roles/role.module';
@@ -31,9 +29,8 @@ import { join } from 'path';
       exclude: ['/api*'],
     }),
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({ whitelist: true }),
