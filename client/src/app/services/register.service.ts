@@ -15,5 +15,7 @@ export interface RegisterCredentials {
 export class RegisterService {
   constructor(private http: HttpClient) {}
 
-  public register(credentials: RegisterCredentials) {}
+  public register(credentials: RegisterCredentials) {
+    return this.http.post('/api/register', credentials);
+  }
 }
