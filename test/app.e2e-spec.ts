@@ -30,7 +30,6 @@ describe('AppController (e2e)', () => {
       .expect(200);
     const { access_token } = res.body;
     token = access_token;
-    console.log(access_token);
     expect(typeof access_token).toBe('string');
     expect(access_token.split('.').length).toBe(3);
   });
@@ -101,7 +100,7 @@ describe('AppController (e2e)', () => {
     expect(message.length).toBe(3);
     expect(message).toContain('email must be an email');
     expect(message).toContain('roleId must be an integer number');
-    expect(message).toContain('roleId must not be less than 0');
+    expect(message).toContain('roleId must not be less than 1');
   });
 
   it('should not register with missing data', async () => {
@@ -117,7 +116,7 @@ describe('AppController (e2e)', () => {
     expect(message).toContain('email must be an email');
     expect(message).toContain('password must be a string');
     expect(message).toContain('roleId must be an integer number');
-    expect(message).toContain('roleId must not be less than 0');
+    expect(message).toContain('roleId must not be less than 1');
   });
 
   it('should return roles when logged in', async () => {
@@ -133,5 +132,93 @@ describe('AppController (e2e)', () => {
 
   it('should not return roles when not logged in', async () => {
     await request(app.getHttpServer()).get('/api/roles').expect(401);
+  });
+
+  it('should successfully update user', async () => {
+    const res = await request(app.getHttpServer())
+      .patch('/api/user/update')
+      .send({
+        userId: 1,
+        firstName: 'testus',
+        lastName: 'testerino',
+        email: 'test1@test.com',
+        roleId: 4,
+      })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+  });
+
+  it('should not update user when not logged in', async () => {
+    await request(app.getHttpServer())
+      .patch('/api/user/update')
+      .send({
+        userId: 1,
+        firstName: 'testus',
+        lastName: 'testerino',
+        email: 'test1@test.com',
+        roleId: 4,
+      })
+      .expect(401);
+  });
+
+  it('should not update user if not an admin', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .patch('/api/user/update')
+      .send({
+        userId: 1,
+        firstName: 'testus',
+        lastName: 'testerino',
+        email: 'test1@test.com',
+        roleId: 4,
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(403);
+  });
+
+  it('should not update user with invalid data', async () => {
+    const res = await request(app.getHttpServer())
+      .patch('/api/user/update')
+      .send({
+        userId: 'hello',
+        firstName: 'testus',
+        lastName: 'testerino',
+        email: 'blabla',
+        roleId: 'top secret',
+      })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
+    const { message } = res.body;
+    expect(message.length).toBe(5);
+    expect(message).toContain('userId must be an integer number');
+    expect(message).toContain('userId must not be less than 1');
+    expect(message).toContain('email must be an email');
+    expect(message).toContain('roleId must be an integer number');
+    expect(message).toContain('roleId must not be less than 1');
+  });
+
+  it('should not update user with missing data', async () => {
+    const res = await request(app.getHttpServer())
+      .patch('/api/user/update')
+      .send({})
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
+    const { message } = res.body;
+    expect(message.length).toBe(7);
+    expect(message).toContain('userId must be an integer number');
+    expect(message).toContain('userId must not be less than 1');
+    expect(message).toContain('firstName must be a string');
+    expect(message).toContain('lastName must be a string');
+    expect(message).toContain('email must be an email');
+    expect(message).toContain('roleId must be an integer number');
+    expect(message).toContain('roleId must not be less than 1');
   });
 });

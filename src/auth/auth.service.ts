@@ -28,7 +28,15 @@ export class AuthService {
     password: string,
     roleId: number,
   ): Promise<User> {
-    const role = await this.validateUser(email, roleId);
+    const role = await this.roleService.getRoleById(roleId);
+    if (!role) {
+      throw new NotFoundException(`Role ID ${roleId} not found`);
+    }
+
+    const users = await this.userService.getUsersByEmail(email);
+    if (users.length > 0) {
+      throw new BadRequestException(`Email ${email} already in use`);
+    }
 
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
@@ -77,7 +85,15 @@ export class AuthService {
     email: string,
     roleId: number,
   ): Promise<User> {
-    const role = await this.validateUser(email, roleId);
+    const role = await this.roleService.getRoleById(roleId);
+    if (!role) {
+      throw new NotFoundException(`Role ID ${roleId} not found`);
+    }
+
+    const users = await this.userService.getUsersByEmail(email);
+    if (users.length > 0 && users[0].id !== userId) {
+      throw new BadRequestException(`Email ${email} already in use`);
+    }
     return this.userService.updateUser({
       id: userId,
       firstName,
@@ -85,19 +101,5 @@ export class AuthService {
       email,
       role,
     });
-  }
-
-  private async validateUser(email: string, roleId: number): Promise<Role> {
-    const role = await this.roleService.getRoleById(roleId);
-    if (!role) {
-      throw new NotFoundException(`Role ID ${roleId} not found`);
-    }
-
-    const users = await this.userService.getUsersByEmail(email);
-    if (users.length > 0) {
-      throw new BadRequestException(`Email ${email} already in use`);
-    }
-
-    return role;
   }
 }

@@ -1,6 +1,10 @@
-import { IsEmail, IsString, IsInt, Min } from 'class-validator';
+import { IsEmail, IsInt, IsString, Min } from 'class-validator';
 
-export class RegisterDto {
+export class UpdateDto {
+  @IsInt()
+  @Min(1)
+  userId: number;
+
   @IsString()
   firstName: string;
 
@@ -9,9 +13,6 @@ export class RegisterDto {
 
   @IsEmail()
   email: string;
-
-  @IsString()
-  password: string;
 
   @IsInt()
   @Min(1)

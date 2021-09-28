@@ -205,13 +205,31 @@ describe('AuthService', () => {
 
   it('should not update to an existing email', async () => {
     try {
-      await service.update(1, 'testus', 'testensen', 'bla@bla.com', 1);
+      await service.update(2, 'testus', 'testensen', 'bla@bla.com', 1);
       expect(false).toBe(true);
     } catch (error) {
       expect(error.status).toBe(400);
       expect(error.message).toBe('Email bla@bla.com already in use');
       expect(error.name).toBe('BadRequestException');
     }
+  });
+
+  it('should update to same email', async () => {
+    const user = await service.update(
+      1,
+      'testus',
+      'testensen',
+      'bla@bla.com',
+      1,
+    );
+    expect(user.id).toBe(1);
+    expect(user.firstName).toBe('testus');
+    expect(user.lastName).toBe('testensen');
+    expect(user.email).toBe('bla@bla.com');
+    expect(user.password).toBe('password');
+    expect(user.passwordNeedsReset).toBe(false);
+    expect(user.role.id).toBe(1);
+    expect(user.role.roleName).toBe('admin');
   });
 
   it('should not update to non-existing roleId', async () => {
