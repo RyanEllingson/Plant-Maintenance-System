@@ -9,6 +9,7 @@ import { promisify } from 'util';
 import { User } from '../users/user.entity';
 import { RoleService } from '../roles/role.service';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../roles/role.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -20,22 +21,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(
+  public async register(
     firstName: string,
     lastName: string,
     email: string,
     password: string,
     roleId: number,
   ): Promise<User> {
-    const role = await this.roleService.getRoleById(roleId);
-    if (!role) {
-      throw new NotFoundException(`Role ID ${roleId} not found`);
-    }
-
-    const users = await this.userService.getUsersByEmail(email);
-    if (users.length > 0) {
-      throw new BadRequestException(`Email ${email} already in use`);
-    }
+    const role = await this.validateUser(email, roleId);
 
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
@@ -50,7 +43,7 @@ export class AuthService {
     );
   }
 
-  async authenticate(email: string, password: string): Promise<User> {
+  public async authenticate(email: string, password: string): Promise<User> {
     const [user] = await this.userService.getUsersByEmail(email);
     if (!user) {
       throw new NotFoundException(`Email ${email} not found`);
@@ -63,7 +56,7 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User) {
+  public async login(user: User) {
     const payload = {
       sub: user.id,
       firstName: user.firstName,
@@ -75,5 +68,36 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  public async update(
+    userId: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    roleId: number,
+  ): Promise<User> {
+    const role = await this.validateUser(email, roleId);
+    return this.userService.updateUser({
+      id: userId,
+      firstName,
+      lastName,
+      email,
+      role,
+    });
+  }
+
+  private async validateUser(email: string, roleId: number): Promise<Role> {
+    const role = await this.roleService.getRoleById(roleId);
+    if (!role) {
+      throw new NotFoundException(`Role ID ${roleId} not found`);
+    }
+
+    const users = await this.userService.getUsersByEmail(email);
+    if (users.length > 0) {
+      throw new BadRequestException(`Email ${email} already in use`);
+    }
+
+    return role;
   }
 }

@@ -6,9 +6,7 @@ import { promisify } from 'util';
 import { AuthService } from './auth.service';
 import { User } from '../users/user.entity';
 import { UserService } from '../users/user.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AppModule } from '../app.module';
-import { AuthModule } from './auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 const scrypt = promisify(_scrypt);
 
@@ -51,15 +49,31 @@ describe('AuthService', () => {
           role,
         } as User);
       },
+      updateUser(user: Partial<User>): Promise<User> {
+        const updatedUser = {
+          id: 1,
+          firstName: 'testy',
+          lastName: 'tester',
+          email: 'test@test.com',
+          password: 'password',
+          passwordNeedsReset: false,
+          role: {
+            id: 1,
+            roleName: 'admin',
+          } as Role,
+        } as User;
+        Object.assign(updatedUser, user);
+        return Promise.resolve(updatedUser);
+      },
     };
     const roleService: Partial<RoleService> = {
       getRoleById(roleId: number): Promise<Role> {
         let result = null;
         if (roleId === 1) {
-          result = Promise.resolve({
+          result = {
             id: 1,
             roleName: 'admin',
-          } as Role);
+          } as Role;
         }
         return Promise.resolve(result);
       },
@@ -169,5 +183,45 @@ describe('AuthService', () => {
     });
     expect(typeof result.access_token).toBe('string');
     expect(result.access_token.split('.').length).toBe(3);
+  });
+
+  it('should successfully update a user', async () => {
+    const user = await service.update(
+      1,
+      'testus',
+      'testensen',
+      'test1@test.com',
+      1,
+    );
+    expect(user.id).toBe(1);
+    expect(user.firstName).toBe('testus');
+    expect(user.lastName).toBe('testensen');
+    expect(user.email).toBe('test1@test.com');
+    expect(user.password).toBe('password');
+    expect(user.passwordNeedsReset).toBe(false);
+    expect(user.role.id).toBe(1);
+    expect(user.role.roleName).toBe('admin');
+  });
+
+  it('should not update to an existing email', async () => {
+    try {
+      await service.update(1, 'testus', 'testensen', 'bla@bla.com', 1);
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(error.status).toBe(400);
+      expect(error.message).toBe('Email bla@bla.com already in use');
+      expect(error.name).toBe('BadRequestException');
+    }
+  });
+
+  it('should not update to non-existing roleId', async () => {
+    try {
+      await service.update(1, 'testus', 'testensen', 'test1@test.com', 2);
+      expect(false).toBe(true);
+    } catch (error) {
+      expect(error.status).toBe(404);
+      expect(error.message).toBe('Role ID 2 not found');
+      expect(error.name).toBe('NotFoundException');
+    }
   });
 });
