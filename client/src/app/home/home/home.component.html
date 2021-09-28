@@ -1,1 +1,5 @@
-<p>home works!</p>
+<app-admin-home *ngIf="user.roleId === 1"></app-admin-home>
+<app-planner-home *ngIf="user.roleId === 2"></app-planner-home>
+<app-maintenance-home *ngIf="user.roleId === 3"></app-maintenance-home>
+<app-operations-home *ngIf="user.roleId === 4"></app-operations-home>
+<app-engineering-home *ngIf="user.roleId === 5"></app-engineering-home>
