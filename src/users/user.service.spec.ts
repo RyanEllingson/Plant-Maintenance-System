@@ -64,6 +64,18 @@ describe('UserService', () => {
     expect(users.length).toBe(0);
   });
 
+  it('should find all users', async () => {
+    const users = await service.getAllUsers();
+    expect(users.length).toBe(4);
+    expect(users[0].firstName).toBe('testy');
+    expect(users[0].lastName).toBe('testerson');
+    expect(users[0].email).toBe('test1@test.com');
+    expect(users[0].password).toBe('password');
+    expect(users[0].passwordNeedsReset).toBe(true);
+    expect(users[0].role.id).toBe(1);
+    expect(users[0].role.roleName).toBe('admin');
+  });
+
   it('should add user', async () => {
     const roles = await roleService.getAllRoles();
     const user = await service.addUser(

@@ -78,6 +78,10 @@ export class AuthService {
     };
   }
 
+  public async getAllUsers(): Promise<User[]> {
+    return this.userService.getAllUsers();
+  }
+
   public async update(
     userId: number,
     firstName: string,

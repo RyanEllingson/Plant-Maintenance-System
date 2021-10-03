@@ -20,6 +20,10 @@ export class UserService {
     return this.repo.find({ email });
   }
 
+  public getAllUsers(): Promise<User[]> {
+    return this.repo.find();
+  }
+
   public addUser(
     firstName: string,
     lastName: string,

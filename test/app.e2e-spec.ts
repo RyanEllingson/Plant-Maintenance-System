@@ -134,9 +134,39 @@ describe('AppController (e2e)', () => {
     await request(app.getHttpServer()).get('/api/roles').expect(401);
   });
 
+  it('should get all users', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    const { body } = res;
+    expect(body.length).toBe(5);
+  });
+
+  it('should not get all users when not logged in', async () => {
+    await request(app.getHttpServer()).get('/api/users').expect(401);
+  });
+
+  it('should not get all users if not an admin', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(403);
+  });
+
   it('should successfully update user', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/api/user/update')
+      .patch('/api/users/update')
       .send({
         userId: 1,
         firstName: 'testus',
@@ -150,7 +180,7 @@ describe('AppController (e2e)', () => {
 
   it('should not update user when not logged in', async () => {
     await request(app.getHttpServer())
-      .patch('/api/user/update')
+      .patch('/api/users/update')
       .send({
         userId: 1,
         firstName: 'testus',
@@ -172,7 +202,7 @@ describe('AppController (e2e)', () => {
     const { access_token } = res.body;
 
     await request(app.getHttpServer())
-      .patch('/api/user/update')
+      .patch('/api/users/update')
       .send({
         userId: 1,
         firstName: 'testus',
@@ -186,7 +216,7 @@ describe('AppController (e2e)', () => {
 
   it('should not update user with invalid data', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/api/user/update')
+      .patch('/api/users/update')
       .send({
         userId: 'hello',
         firstName: 'testus',
@@ -207,7 +237,7 @@ describe('AppController (e2e)', () => {
 
   it('should not update user with missing data', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/api/user/update')
+      .patch('/api/users/update')
       .send({})
       .set('Authorization', `Bearer ${token}`)
       .expect(400);

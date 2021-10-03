@@ -7,6 +7,7 @@ import {
   HttpCode,
   Patch,
   ForbiddenException,
+  Get,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
@@ -43,7 +44,14 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(1)
-  @Patch('user/update')
+  @Get('users')
+  async getAllUsers() {
+    return this.authService.getAllUsers();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(1)
+  @Patch('users/update')
   async update(@Body() body: UpdateDto) {
     const { userId, firstName, lastName, email, roleId } = body;
     await this.authService.update(userId, firstName, lastName, email, roleId);
