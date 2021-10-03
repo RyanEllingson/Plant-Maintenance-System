@@ -158,6 +158,14 @@ describe('AppController (e2e)', () => {
 
     const { body } = res;
     expect(body.length).toBe(5);
+    expect(body[0].id).toBe(1);
+    expect(body[0].firstName).toBe('testy');
+    expect(body[0].lastName).toBe('testerson');
+    expect(body[0].email).toBe('test1@test.com');
+    expect(body[0].passwordNeedsReset).toBe(true);
+    expect(body[0].role.id).toBe(1);
+    expect(body[0].role.roleName).toBe('admin');
+    expect(body[0].password).toBeUndefined();
   });
 
   it('should not get all users when not logged in', async () => {
