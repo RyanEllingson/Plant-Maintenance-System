@@ -10,13 +10,13 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () =>
       import('./home/home.module').then((mod) => mod.HomeModule),
-    canActivate: [AuthGuard],
+    canLoad: [AuthGuard],
   },
   {
     path: 'register',
     loadChildren: () =>
       import('./register/register.module').then((mod) => mod.RegisterModule),
-    canActivate: [AuthGuard, AdminGuard],
+    canLoad: [AuthGuard, AdminGuard],
   },
 ];
 

@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  UrlTree,
-  Router,
-} from '@angular/router';
+import { UrlTree, Router, CanLoad, Route, UrlSegment } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanLoad {
   private token: string;
 
   constructor(private router: Router, private authService: AuthService) {
@@ -19,11 +13,7 @@ export class AuthGuard implements CanActivate {
       this.token = token;
     });
   }
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): boolean | UrlTree {
+  canLoad(route: Route, segments: UrlSegment[]): boolean | UrlTree {
     if (this.token === null) {
       return this.router.parseUrl('');
     }
