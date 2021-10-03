@@ -134,6 +134,22 @@ describe('AppController (e2e)', () => {
     await request(app.getHttpServer()).get('/api/roles').expect(401);
   });
 
+  it('should not return roles if not an admin', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .get('/api/roles')
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(403);
+  });
+
   it('should get all users', async () => {
     const res = await request(app.getHttpServer())
       .get('/api/users')
