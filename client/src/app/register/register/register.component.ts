@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatchPassword } from '../../validators/match-password';
 import { RegisterService } from '../../services/register.service';
-import { Role, RoleService } from '../../services/role.service';
+import { Role } from '../../services/role.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -22,13 +23,17 @@ export class RegisterComponent implements OnInit {
     [this.matchPassword.validate],
   );
 
-  public allRoles: Role[] = [];
+  public allRoles: Role[];
 
   constructor(
-    private roleService: RoleService,
     private registerService: RegisterService,
     private matchPassword: MatchPassword,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.route.data.subscribe(({ roles }) => {
+      this.allRoles = roles;
+    });
+  }
 
   public handleSubmit(): void {
     this.registerForm.markAllAsTouched();
@@ -62,12 +67,5 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.roleService.getAllRoles().subscribe({
-      next: (allRoles) => {
-        this.allRoles = allRoles;
-      },
-      error: (err) => {},
-    });
-  }
+  ngOnInit(): void {}
 }
