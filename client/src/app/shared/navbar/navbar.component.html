@@ -24,6 +24,11 @@
             >Register</a
           >
         </li>
+        <li class="nav-item" *ngIf="user.roleId === 1">
+          <a class="nav-link" routerLink="update-user" routerLinkActive="active"
+            >Update User</a
+          >
+        </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="logout">Logout</a>
         </li>

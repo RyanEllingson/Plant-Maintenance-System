@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="row justify-content-center mb-3">
+    <div class="col-8">
+      <div class="card rounded-0 shadow-lg px-3">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-3">Update a user</h5>
+          <form [formGroup]="selectUserForm">
+            <div class="mb-3">
+              <select class="form-select" formControlName="user">
+                <option [ngValue]="null" disabled>Choose user</option>
+                <option *ngFor="let user of allUsers" [ngValue]="user">
+                  {{ user.firstName | titlecase }}
+                  {{ user.lastName | titlecase }} ({{ user.email }}) -
+                  {{ user.role.roleName | titlecase }}
+                </option>
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="selectUserForm.value.user"
+    class="row justify-content-center mb-5"
+  >
+    <div class="col-8">
+      <div class="card rounded-0 shadow-lg px-3">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-3">Update user info</h5>
+          <div
+            *ngIf="updateUserForm.errors"
+            class="alert alert-danger"
+            role="alert"
+          >
+            {{ updateUserForm.errors.errorResponse }}
+          </div>
+          <form [formGroup]="updateUserForm" (ngSubmit)="handleSubmit()">
+            <app-input
+              inputType="text"
+              label="first name"
+              [control]="updateUserForm.get('firstName')"
+            ></app-input>
+            <app-input
+              inputType="text"
+              label="last name"
+              [control]="updateUserForm.get('lastName')"
+            ></app-input>
+            <app-input
+              inputType="text"
+              label="email"
+              [control]="updateUserForm.get('email')"
+            ></app-input>
+            <div class="mb-3">
+              <select
+                class="form-select"
+                formControlName="role"
+                [ngClass]="{
+                  'is-invalid':
+                    updateUserForm.get('role').touched &&
+                    updateUserForm.get('role').errors &&
+                    updateUserForm.get('role').errors.required
+                }"
+                [compareWith]="compareRoles"
+              >
+                <option [ngValue]="null" disabled>Choose role</option>
+                <option *ngFor="let role of allRoles" [ngValue]="role">
+                  {{ role.roleName | titlecase }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  updateUserForm.get('role').touched &&
+                  updateUserForm.get('role').errors &&
+                  updateUserForm.get('role').errors.required
+                "
+                class="invalid-feedback"
+              >
+                Entry is required
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

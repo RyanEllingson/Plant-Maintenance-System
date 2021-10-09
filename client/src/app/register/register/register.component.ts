@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatchPassword } from '../../validators/match-password';
-import { RegisterService } from '../../services/register.service';
+import { UserService } from '../../services/user.service';
 import { Role } from '../../services/role.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -26,7 +26,7 @@ export class RegisterComponent implements OnInit {
   public allRoles: Role[];
 
   constructor(
-    private registerService: RegisterService,
+    private userService: UserService,
     private matchPassword: MatchPassword,
     private route: ActivatedRoute,
   ) {
@@ -41,7 +41,7 @@ export class RegisterComponent implements OnInit {
       this.registerForm.markAsUntouched();
       const { firstName, lastName, email, password, role } =
         this.registerForm.value;
-      this.registerService
+      this.userService
         .register({ firstName, lastName, email, password, roleId: role.id })
         .subscribe({
           next: () => {

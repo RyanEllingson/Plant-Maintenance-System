@@ -18,6 +18,14 @@ const routes: Routes = [
       import('./register/register.module').then((mod) => mod.RegisterModule),
     canLoad: [AuthGuard, AdminGuard],
   },
+  {
+    path: 'update-user',
+    loadChildren: () =>
+      import('./update-user/update-user.module').then(
+        (mod) => mod.UpdateUserModule,
+      ),
+    canLoad: [AuthGuard, AdminGuard],
+  },
 ];
 
 @NgModule({
