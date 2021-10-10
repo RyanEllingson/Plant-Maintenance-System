@@ -32,16 +32,17 @@ export class UpdateUserComponent implements OnInit {
   ngOnInit(): void {
     this.selectUserForm.valueChanges.subscribe((value: { user: UserData }) => {
       const { user } = value;
-      console.log(user);
-      this.updateUserForm = new FormGroup({
-        firstName: new FormControl(user.firstName, [Validators.required]),
-        lastName: new FormControl(user.lastName, [Validators.required]),
-        email: new FormControl(user.email, [
-          Validators.required,
-          Validators.email,
-        ]),
-        role: new FormControl(user.role, [Validators.required]),
-      });
+      if (user) {
+        this.updateUserForm = new FormGroup({
+          firstName: new FormControl(user.firstName, [Validators.required]),
+          lastName: new FormControl(user.lastName, [Validators.required]),
+          email: new FormControl(user.email, [
+            Validators.required,
+            Validators.email,
+          ]),
+          role: new FormControl(user.role, [Validators.required]),
+        });
+      }
     });
   }
 
@@ -55,7 +56,10 @@ export class UpdateUserComponent implements OnInit {
         .updateUser({ userId: id, firstName, lastName, email, roleId: role.id })
         .subscribe({
           next: () => {
-            console.log('user updated!');
+            this.userService.getAllUsers().subscribe((allUsers) => {
+              this.allUsers = allUsers;
+              this.selectUserForm.reset();
+            });
           },
           error: (err) => {
             if (err.status === 0) {

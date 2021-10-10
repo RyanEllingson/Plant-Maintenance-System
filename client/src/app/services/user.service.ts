@@ -42,7 +42,6 @@ export class UserService {
   }
 
   public updateUser(credentials: UpdateUserCredentials): Observable<void> {
-    console.log(credentials);
     return this.http.patch<void>('/api/users/update', credentials);
   }
 }
