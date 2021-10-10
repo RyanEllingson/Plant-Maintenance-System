@@ -4,6 +4,7 @@ import { MatchPassword } from '../../validators/match-password';
 import { UserService } from '../../services/user.service';
 import { Role } from '../../services/role.service';
 import { ActivatedRoute } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -29,6 +30,7 @@ export class RegisterComponent implements OnInit {
     private userService: UserService,
     private matchPassword: MatchPassword,
     private route: ActivatedRoute,
+    private toastService: ToastService,
   ) {
     this.route.data.subscribe(({ roles }) => {
       this.allRoles = roles;
@@ -45,7 +47,10 @@ export class RegisterComponent implements OnInit {
         .register({ firstName, lastName, email, password, roleId: role.id })
         .subscribe({
           next: () => {
-            console.log('user added!');
+            this.registerForm.reset();
+            this.toastService.toastMessage$.next(
+              `User ${firstName} ${lastName} successfully created!`,
+            );
           },
           error: (err) => {
             if (err.status === 0) {
