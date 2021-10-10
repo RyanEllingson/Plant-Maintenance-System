@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 import { Role } from '../../services/role.service';
 import { UserData, UserService } from '../../services/user.service';
 
@@ -22,7 +23,11 @@ export class UpdateUserComponent implements OnInit {
   public updateUserForm: AbstractControl;
   public allRoles: Role[];
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {
+  constructor(
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private toastService: ToastService,
+  ) {
     this.route.data.subscribe(({ users, roles }) => {
       this.allUsers = users;
       this.allRoles = roles;
@@ -59,6 +64,9 @@ export class UpdateUserComponent implements OnInit {
             this.userService.getAllUsers().subscribe((allUsers) => {
               this.allUsers = allUsers;
               this.selectUserForm.reset();
+              this.toastService.toastMessage$.next(
+                `User ${firstName} ${lastName} successfully updated!`,
+              );
             });
           },
           error: (err) => {
