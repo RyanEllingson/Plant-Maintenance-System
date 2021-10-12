@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { Toast } from 'bootstrap';
 import { ToastService } from '../../services/toast.service';
 
@@ -8,16 +8,13 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['./toast.component.css'],
 })
 export class ToastComponent implements OnInit {
-  @Input() public containerId: string;
   public message: string;
   private toast: Toast;
 
-  constructor(private toastService: ToastService) {}
+  constructor(private toastService: ToastService, private el: ElementRef) {}
 
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    const toastContainer = document.getElementById(this.containerId);
+  ngOnInit(): void {
+    const toastContainer = this.el.nativeElement.childNodes[0].childNodes[0];
     this.toast = new Toast(toastContainer);
     this.toastService.toastMessage$.subscribe((message) => {
       this.message = message;
