@@ -275,4 +275,45 @@ describe('AppController (e2e)', () => {
     expect(message).toContain('roleId must be an integer number');
     expect(message).toContain('roleId must not be less than 1');
   });
+
+  it("should successfully change other user's password", async () => {
+    await request(app.getHttpServer())
+      .patch('/api/users/change-other-password')
+      .send({
+        userId: 1,
+        password: 'newpassword',
+      })
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+  });
+
+  it("should not change other user's password when not logged in", async () => {
+    await request(app.getHttpServer())
+      .patch('/api/users/change-other-password')
+      .send({
+        userId: 1,
+        password: 'newerpassword',
+      })
+      .expect(401);
+  });
+
+  it("should not change other user's password if not an admin", async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .patch('/api/users/change-other-password')
+      .send({
+        userId: 1,
+        password: 'newerpassword',
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(403);
+  });
 });

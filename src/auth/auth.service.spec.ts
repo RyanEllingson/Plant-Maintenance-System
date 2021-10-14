@@ -50,7 +50,7 @@ describe('AuthService', () => {
         } as User);
       },
       updateUser(user: Partial<User>): Promise<User> {
-        const updatedUser = {
+        const updatedUser: User = {
           id: 1,
           firstName: 'testy',
           lastName: 'tester',
@@ -61,7 +61,7 @@ describe('AuthService', () => {
             id: 1,
             roleName: 'admin',
           } as Role,
-        } as User;
+        };
         Object.assign(updatedUser, user);
         return Promise.resolve(updatedUser);
       },
@@ -241,5 +241,20 @@ describe('AuthService', () => {
       expect(error.message).toBe('Role ID 2 not found');
       expect(error.name).toBe('NotFoundException');
     }
+  });
+
+  it('should change existing other password', async () => {
+    const user = await service.changeOtherPassword(1, 'betterpassword');
+    expect(user.id).toBe(1);
+    expect(user.firstName).toBe('testy');
+    expect(user.lastName).toBe('tester');
+    expect(user.email).toBe('test@test.com');
+    expect(user.passwordNeedsReset).toBe(true);
+    expect(user.role.id).toBe(1);
+    expect(user.role.roleName).toBe('admin');
+
+    const [salt, actual] = user.password.split('.');
+    const expected = (await scrypt('betterpassword', salt, 32)) as Buffer;
+    expect(actual).toBe(expected.toString('hex'));
   });
 });

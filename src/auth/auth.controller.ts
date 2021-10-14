@@ -6,7 +6,6 @@ import {
   UseGuards,
   HttpCode,
   Patch,
-  ForbiddenException,
   Get,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -18,6 +17,7 @@ import { Roles } from '../roles/roles.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { UpdateDto } from './dtos/update.dto';
+import { ChangeOtherPasswordDto } from './dtos/change-other-password.dto';
 
 @Controller()
 export class AuthController {
@@ -58,5 +58,13 @@ export class AuthController {
   async update(@Body() body: UpdateDto) {
     const { userId, firstName, lastName, email, roleId } = body;
     await this.authService.update(userId, firstName, lastName, email, roleId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(1)
+  @Patch('users/change-other-password')
+  async changeOtherPassword(@Body() body: ChangeOtherPasswordDto) {
+    const { userId, password } = body;
+    await this.authService.changeOtherPassword(userId, password);
   }
 }

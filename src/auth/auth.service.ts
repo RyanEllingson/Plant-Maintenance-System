@@ -9,7 +9,6 @@ import { promisify } from 'util';
 import { User } from '../users/user.entity';
 import { RoleService } from '../roles/role.service';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from '../roles/role.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -104,6 +103,21 @@ export class AuthService {
       lastName,
       email,
       role,
+    });
+  }
+
+  public async changeOtherPassword(
+    userId: number,
+    password: string,
+  ): Promise<User> {
+    const salt = randomBytes(8).toString('hex');
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hashedPass = salt + '.' + hash.toString('hex');
+
+    return this.userService.updateUser({
+      id: userId,
+      password: hashedPass,
+      passwordNeedsReset: true,
     });
   }
 }
