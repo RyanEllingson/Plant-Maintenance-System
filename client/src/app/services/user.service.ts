@@ -19,6 +19,11 @@ export interface UpdateUserCredentials {
   roleId: number;
 }
 
+export interface ChangeOtherPasswordCredentials {
+  userId: number;
+  password: string;
+}
+
 export interface UserData {
   id: number;
   firstName: string;
@@ -43,5 +48,14 @@ export class UserService {
 
   public updateUser(credentials: UpdateUserCredentials): Observable<void> {
     return this.http.patch<void>('/api/users/update', credentials);
+  }
+
+  public changeOtherPassword(
+    credentials: ChangeOtherPasswordCredentials,
+  ): Observable<void> {
+    return this.http.patch<void>(
+      '/api/users/change-other-password',
+      credentials,
+    );
   }
 }
