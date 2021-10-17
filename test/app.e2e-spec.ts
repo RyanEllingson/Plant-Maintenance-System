@@ -316,4 +316,62 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `Bearer ${access_token}`)
       .expect(403);
   });
+
+  it("should change a user's own password", async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .patch('/api/users/change-own-password')
+      .send({
+        userId: 4,
+        password: 'betterpassword',
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'betterpassword',
+      })
+      .expect(200);
+  });
+
+  it('should not update own password if not logged in', async () => {
+    await request(app.getHttpServer())
+      .patch('/api/users/change-own-password')
+      .send({
+        userId: 4,
+        password: 'betterpassword',
+      })
+      .expect(401);
+  });
+
+  it("should not update other user's password", async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'planner@test.com',
+        password: 'betterpassword',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    await request(app.getHttpServer())
+      .patch('/api/users/change-own-password')
+      .send({
+        userId: 3,
+        password: 'betterpassword',
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(403);
+  });
 });

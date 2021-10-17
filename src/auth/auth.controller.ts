@@ -9,6 +9,7 @@ import {
   Get,
   UseInterceptors,
   ClassSerializerInterceptor,
+  ForbiddenException,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
@@ -17,7 +18,7 @@ import { Roles } from '../roles/roles.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { UpdateDto } from './dtos/update.dto';
-import { ChangeOtherPasswordDto } from './dtos/change-other-password.dto';
+import { ChangePasswordDto } from './dtos/change-password.dto';
 
 @Controller()
 export class AuthController {
@@ -63,8 +64,18 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(1)
   @Patch('users/change-other-password')
-  async changeOtherPassword(@Body() body: ChangeOtherPasswordDto) {
+  async changeOtherPassword(@Body() body: ChangePasswordDto) {
     const { userId, password } = body;
-    await this.authService.changeOtherPassword(userId, password);
+    await this.authService.changePassword(userId, password);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('users/change-own-password')
+  async changeOwnPassword(@Body() body: ChangePasswordDto, @Request() req) {
+    const { userId, password } = body;
+    if (userId != req.user.userId) {
+      throw new ForbiddenException();
+    }
+    await this.authService.changePassword(userId, password);
   }
 }

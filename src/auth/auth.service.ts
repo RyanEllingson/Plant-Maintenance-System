@@ -106,10 +106,7 @@ export class AuthService {
     });
   }
 
-  public async changeOtherPassword(
-    userId: number,
-    password: string,
-  ): Promise<User> {
+  public async changePassword(userId: number, password: string): Promise<User> {
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     const hashedPass = salt + '.' + hash.toString('hex');

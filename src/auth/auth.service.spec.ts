@@ -243,8 +243,8 @@ describe('AuthService', () => {
     }
   });
 
-  it('should change existing other password', async () => {
-    const user = await service.changeOtherPassword(1, 'betterpassword');
+  it('should change existing password', async () => {
+    const user = await service.changePassword(1, 'betterpassword');
     expect(user.id).toBe(1);
     expect(user.firstName).toBe('testy');
     expect(user.lastName).toBe('tester');
