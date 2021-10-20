@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatchPassword } from 'src/app/validators/match-password';
+import { MatchPassword } from '../../validators/match-password';
 import { ToastService } from '../../services/toast.service';
 import { UserData, UserService } from '../../services/user.service';
 

@@ -34,6 +34,14 @@ const routes: Routes = [
       ),
     canLoad: [AuthGuard, AdminGuard],
   },
+  {
+    path: 'change-my-password',
+    loadChildren: () =>
+      import('./change-own-password/change-own-password.module').then(
+        (mod) => mod.ChangeOwnPasswordModule,
+      ),
+    canLoad: [AuthGuard],
+  },
 ];
 
 @NgModule({
