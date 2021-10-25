@@ -243,13 +243,28 @@ describe('AuthService', () => {
     }
   });
 
-  it('should change existing password', async () => {
-    const user = await service.changePassword(1, 'betterpassword');
+  it('should change existing other password', async () => {
+    const user = await service.changeOtherPassword(1, 'betterpassword');
     expect(user.id).toBe(1);
     expect(user.firstName).toBe('testy');
     expect(user.lastName).toBe('tester');
     expect(user.email).toBe('test@test.com');
     expect(user.passwordNeedsReset).toBe(true);
+    expect(user.role.id).toBe(1);
+    expect(user.role.roleName).toBe('admin');
+
+    const [salt, actual] = user.password.split('.');
+    const expected = (await scrypt('betterpassword', salt, 32)) as Buffer;
+    expect(actual).toBe(expected.toString('hex'));
+  });
+
+  it('should change own password', async () => {
+    const user = await service.changeOwnPassword(1, 'betterpassword');
+    expect(user.id).toBe(1);
+    expect(user.firstName).toBe('testy');
+    expect(user.lastName).toBe('tester');
+    expect(user.email).toBe('test@test.com');
+    expect(user.passwordNeedsReset).toBe(false);
     expect(user.role.id).toBe(1);
     expect(user.role.roleName).toBe('admin');
 

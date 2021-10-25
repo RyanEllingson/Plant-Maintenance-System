@@ -19,6 +19,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { UpdateDto } from './dtos/update.dto';
 import { ChangePasswordDto } from './dtos/change-password.dto';
+import { PasswordGuard } from './password.guard';
 
 @Controller()
 export class AuthController {
@@ -31,7 +32,7 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PasswordGuard)
   @Roles(1)
   @Post('register')
   async register(@Body() body: RegisterDto) {
@@ -45,7 +46,7 @@ export class AuthController {
     );
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PasswordGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Roles(1)
   @Get('users')
@@ -53,7 +54,7 @@ export class AuthController {
     return this.authService.getAllUsers();
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PasswordGuard)
   @Roles(1)
   @Patch('users/update')
   async update(@Body() body: UpdateDto) {
@@ -61,12 +62,12 @@ export class AuthController {
     await this.authService.update(userId, firstName, lastName, email, roleId);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PasswordGuard)
   @Roles(1)
   @Patch('users/change-other-password')
   async changeOtherPassword(@Body() body: ChangePasswordDto) {
     const { userId, password } = body;
-    await this.authService.changePassword(userId, password);
+    await this.authService.changeOtherPassword(userId, password);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -76,6 +77,6 @@ export class AuthController {
     if (userId != req.user.userId) {
       throw new ForbiddenException();
     }
-    await this.authService.changePassword(userId, password);
+    await this.authService.changeOwnPassword(userId, password);
   }
 }

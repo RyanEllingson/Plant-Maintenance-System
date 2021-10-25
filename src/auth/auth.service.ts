@@ -71,6 +71,7 @@ export class AuthService {
       email: user.email,
       roleId: user.role.id,
       role: user.role.roleName,
+      passwordNeedsReset: user.passwordNeedsReset,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -106,7 +107,10 @@ export class AuthService {
     });
   }
 
-  public async changePassword(userId: number, password: string): Promise<User> {
+  public async changeOtherPassword(
+    userId: number,
+    password: string,
+  ): Promise<User> {
     const salt = randomBytes(8).toString('hex');
     const hash = (await scrypt(password, salt, 32)) as Buffer;
     const hashedPass = salt + '.' + hash.toString('hex');
@@ -115,6 +119,21 @@ export class AuthService {
       id: userId,
       password: hashedPass,
       passwordNeedsReset: true,
+    });
+  }
+
+  public async changeOwnPassword(
+    userId: number,
+    password: string,
+  ): Promise<User> {
+    const salt = randomBytes(8).toString('hex');
+    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hashedPass = salt + '.' + hash.toString('hex');
+
+    return this.userService.updateUser({
+      id: userId,
+      password: hashedPass,
+      passwordNeedsReset: false,
     });
   }
 }

@@ -84,6 +84,31 @@ describe('AppController (e2e)', () => {
       .expect(403);
   });
 
+  it('should not register if password needs to be changed', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .post('/api/register')
+      .send({
+        firstName: 'testina',
+        lastName: 'testerella',
+        email: 'test3@test.com',
+        password: 'password',
+        roleId: 5,
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(400);
+
+    expect(res2.body.message).toBe('Please change your password');
+  });
+
   it('should not register with invalid data', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/register')
@@ -150,6 +175,24 @@ describe('AppController (e2e)', () => {
       .expect(403);
   });
 
+  it('should not return roles if password needs to be changed', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .get('/api/roles')
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(400);
+
+    expect(res2.body.message).toBe('Please change your password');
+  });
+
   it('should get all users', async () => {
     const res = await request(app.getHttpServer())
       .get('/api/users')
@@ -157,7 +200,7 @@ describe('AppController (e2e)', () => {
       .expect(200);
 
     const { body } = res;
-    expect(body.length).toBe(5);
+    expect(body.length).toBe(6);
     expect(body[0].id).toBe(1);
     expect(body[0].firstName).toBe('testy');
     expect(body[0].lastName).toBe('testerson');
@@ -186,6 +229,24 @@ describe('AppController (e2e)', () => {
       .get('/api/users')
       .set('Authorization', `Bearer ${access_token}`)
       .expect(403);
+  });
+
+  it('should not get all users if password needs to be changed', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(400);
+
+    expect(res2.body.message).toBe('Please change your password');
   });
 
   it('should successfully update user', async () => {
@@ -236,6 +297,31 @@ describe('AppController (e2e)', () => {
       })
       .set('Authorization', `Bearer ${access_token}`)
       .expect(403);
+  });
+
+  it('should not update user if password needs to be changed', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .patch('/api/users/update')
+      .send({
+        userId: 1,
+        firstName: 'testus',
+        lastName: 'testerino',
+        email: 'test1@test.com',
+        roleId: 4,
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(400);
+
+    expect(res2.body.message).toBe('Please change your password');
   });
 
   it('should not update user with invalid data', async () => {
@@ -317,11 +403,33 @@ describe('AppController (e2e)', () => {
       .expect(403);
   });
 
+  it("should not change other user's password if password needs to be changed", async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'password',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .patch('/api/users/change-other-password')
+      .send({
+        userId: 1,
+        password: 'newerpassword',
+      })
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(400);
+
+    expect(res2.body.message).toBe('Please change your password');
+  });
+
   it("should change a user's own password", async () => {
     const res = await request(app.getHttpServer())
       .post('/api/login')
       .send({
-        email: 'planner@test.com',
+        email: 'admin2@test.com',
         password: 'password',
       })
       .expect(200);
@@ -330,7 +438,7 @@ describe('AppController (e2e)', () => {
     await request(app.getHttpServer())
       .patch('/api/users/change-own-password')
       .send({
-        userId: 4,
+        userId: 5,
         password: 'betterpassword',
       })
       .set('Authorization', `Bearer ${access_token}`)
@@ -339,10 +447,30 @@ describe('AppController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/api/login')
       .send({
-        email: 'planner@test.com',
+        email: 'admin2@test.com',
         password: 'betterpassword',
       })
       .expect(200);
+  });
+
+  it('should get roles after changing password', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/login')
+      .send({
+        email: 'admin2@test.com',
+        password: 'betterpassword',
+      })
+      .expect(200);
+    const { access_token } = res.body;
+
+    const res2 = await request(app.getHttpServer())
+      .get('/api/roles')
+      .set('Authorization', `Bearer ${access_token}`)
+      .expect(200);
+    const { body } = res2;
+    expect(body.length).toBe(5);
+    expect(body[0].id).toBe(1);
+    expect(body[0].roleName).toBe('admin');
   });
 
   it('should not update own password if not logged in', async () => {
@@ -360,7 +488,7 @@ describe('AppController (e2e)', () => {
       .post('/api/login')
       .send({
         email: 'planner@test.com',
-        password: 'betterpassword',
+        password: 'password',
       })
       .expect(200);
     const { access_token } = res.body;
